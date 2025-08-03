@@ -1,0 +1,22 @@
+{
+  "testData": {
+    "user": {
+      "firstName": "Vaidas",
+      "lastName": "Testauskas",
+      "email": "vaidas.test@example.com",
+      "phone": "+37060000000",
+      "address": {
+        "city": "Vilnius",
+        "street": "Gedimino pr. 1",
+        "postalCode": "01103"
+      }
+    },
+    "checkout": {
+      "loginType": "guest",
+      "deliveryMethod": "dpd",
+      "paymentMethod": "card"
+    },
+    "category": "Varikliai",
+    "addFirstProduct": true
+  }
+}
