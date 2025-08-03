@@ -1,0 +1,227 @@
+{
+  "info": {
+    "_postman_id": "b1e1e1e1-1111-2222-3333-444455556667",
+    "name": "Petstore API Automation - 4 Pets Full Flow",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Creates 4 pets, places orders, deletes all, verifies deletion, with retries and API key."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://petstore.swagger.io/v2" },
+    { "key": "apiKey", "value": "special-key" }
+  ],
+  "item": [
+    {
+      "name": "Create 4 Pets",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.environment.set('petIds', JSON.stringify([]));",
+              "pm.environment.set('orderIds', JSON.stringify([]));"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let petIds = [];",
+              "for (let i = 1; i <= 4; i++) {",
+              "  let pet = {",
+              "    id: 10000 + i,",
+              "    category: { id: i, name: 'cat' + i },",
+              "    name: 'cat' + i,",
+              "    photoUrls: ['https://example.com/cat' + i + '.jpg'],",
+              "    tags: [{ id: i, name: 'cute' }],",
+              "    status: 'available'",
+              "  };",
+              "  pm.sendRequest({",
+              "    url: pm.variables.get('baseUrl') + '/pet',",
+              "    method: 'POST',",
+              "    header: { 'Content-Type': 'application/json' },",
+              "    body: { mode: 'raw', raw: JSON.stringify(pet) }",
+              "  }, function (err, res) {",
+              "    pm.test('Pet created: ' + pet.id, function () {",
+              "      pm.expect(res.code).to.be.oneOf([200,201]);",
+              "    });",
+              "    petIds.push(pet.id);",
+              "    if (petIds.length === 4) {",
+              "      pm.environment.set('petIds', JSON.stringify(petIds));",
+              "    }",
+              "  });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/pet/findByStatus?status=available", "host": ["{{baseUrl}}"], "path": ["pet", "findByStatus"], "query": [{"key": "status", "value": "available"}] }
+      }
+    },
+    {
+      "name": "Place Orders for All Pets",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let petIds = JSON.parse(pm.environment.get('petIds'));",
+              "let orderIds = [];",
+              "let placed = 0;",
+              "petIds.forEach(function(petId, idx) {",
+              "  let order = {",
+              "    id: 20000 + idx,",
+              "    petId: petId,",
+              "    quantity: 1,",
+              "    shipDate: new Date().toISOString(),",
+              "    status: 'placed',",
+              "    complete: true",
+              "  };",
+              "  pm.sendRequest({",
+              "    url: pm.variables.get('baseUrl') + '/store/order',",
+              "    method: 'POST',",
+              "    header: { 'Content-Type': 'application/json' },",
+              "    body: { mode: 'raw', raw: JSON.stringify(order) }",
+              "  }, function (err, res) {",
+              "    pm.test('Order placed: ' + order.id, function () {",
+              "      pm.expect(res.code).to.eql(200);",
+              "    });",
+              "    orderIds.push(order.id);",
+              "    placed++;",
+              "    if (placed === petIds.length) {",
+              "      pm.environment.set('orderIds', JSON.stringify(orderIds));",
+              "    }",
+              "  });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/store/inventory", "host": ["{{baseUrl}}"], "path": ["store", "inventory"] }
+      }
+    },
+    {
+      "name": "Delete All Orders (with Retry)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let orderIds = JSON.parse(pm.environment.get('orderIds'));",
+              "orderIds.forEach(function(orderId) {",
+              "  let retries = 0;",
+              "  function deleteOrder() {",
+              "    pm.sendRequest({",
+              "      url: pm.variables.get('baseUrl') + '/store/order/' + orderId,",
+              "      method: 'DELETE',",
+              "      header: { 'api_key': pm.variables.get('apiKey') }",
+              "    }, function (err, res) {",
+              "      if (res.code === 200) {",
+              "        pm.test('Order deleted: ' + orderId, function () { pm.expect(res.code).to.eql(200); });",
+              "      } else if (res.code === 404 && retries < 3) {",
+              "        retries++;",
+              "        deleteOrder();",
+              "      } else {",
+              "        pm.test('Order delete failed: ' + orderId, function () { pm.expect(res.code).to.eql(200); });",
+              "      }",
+              "    });",
+              "  }",
+              "  deleteOrder();",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/store/inventory", "host": ["{{baseUrl}}"], "path": ["store", "inventory"] }
+      }
+    },
+    {
+      "name": "Delete All Pets (with Retry)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let petIds = JSON.parse(pm.environment.get('petIds'));",
+              "petIds.forEach(function(petId) {",
+              "  let retries = 0;",
+              "  function deletePet() {",
+              "    pm.sendRequest({",
+              "      url: pm.variables.get('baseUrl') + '/pet/' + petId,",
+              "      method: 'DELETE',",
+              "      header: { 'api_key': pm.variables.get('apiKey') }",
+              "    }, function (err, res) {",
+              "      if (res.code === 200) {",
+              "        pm.test('Pet deleted: ' + petId, function () { pm.expect(res.code).to.eql(200); });",
+              "      } else if (res.code === 404 && retries < 3) {",
+              "        retries++;",
+              "        deletePet();",
+              "      } else {",
+              "        pm.test('Pet delete failed: ' + petId, function () { pm.expect(res.code).to.eql(200); });",
+              "      }",
+              "    });",
+              "  }",
+              "  deletePet();",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/pet/findByStatus?status=available", "host": ["{{baseUrl}}"], "path": ["pet", "findByStatus"], "query": [{"key": "status", "value": "available"}] }
+      }
+    },
+    {
+      "name": "Verify Deletion (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let petIds = JSON.parse(pm.environment.get('petIds'));",
+              "let orderIds = JSON.parse(pm.environment.get('orderIds'));",
+              "petIds.forEach(function(petId) {",
+              "  pm.sendRequest({",
+              "    url: pm.variables.get('baseUrl') + '/pet/' + petId,",
+              "    method: 'GET'",
+              "  }, function (err, res) {",
+              "    pm.test('Pet not found after delete: ' + petId, function () { pm.expect(res.code).to.eql(404); });",
+              "  });",
+              "});",
+              "orderIds.forEach(function(orderId) {",
+              "  pm.sendRequest({",
+              "    url: pm.variables.get('baseUrl') + '/store/order/' + orderId,",
+              "    method: 'GET'",
+              "  }, function (err, res) {",
+              "    pm.test('Order not found after delete: ' + orderId, function () { pm.expect(res.code).to.eql(404); });",
+              "  });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/store/inventory", "host": ["{{baseUrl}}"], "path": ["store", "inventory"] }
+      }
+    }
+  ]
+}

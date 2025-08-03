@@ -1,0 +1,830 @@
+{
+  "info": {
+    "_postman_id": "a1a2a3a4-b5b6-c7c8-d9d0-e1e2e3e4e5e6",
+    "name": "Petstore API Automation - Complete Flow",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Creates 4 pets, places orders, deletes all, verifies deletion with retry mechanism"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://petstore.swagger.io/v2" },
+    { "key": "apiKey", "value": "special-key" }
+  ],
+  "item": [
+    {
+      "name": "1. Create Pet 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 10001,\n  \"category\": {\n    \"id\": 1,\n    \"name\": \"Dogs\"\n  },\n  \"name\": \"Buddy\",\n  \"photoUrls\": [\n    \"https://example.com/buddy.jpg\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 1,\n      \"name\": \"friendly\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 1 created successfully\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "",
+              "if (pm.response.code === 200 || pm.response.code === 201) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"pet1Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Create Pet 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 10002,\n  \"category\": {\n    \"id\": 2,\n    \"name\": \"Cats\"\n  },\n  \"name\": \"Whiskers\",\n  \"photoUrls\": [\n    \"https://example.com/whiskers.jpg\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 2,\n      \"name\": \"playful\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 2 created successfully\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "",
+              "if (pm.response.code === 200 || pm.response.code === 201) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"pet2Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Create Pet 3",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 10003,\n  \"category\": {\n    \"id\": 3,\n    \"name\": \"Birds\"\n  },\n  \"name\": \"Tweety\",\n  \"photoUrls\": [\n    \"https://example.com/tweety.jpg\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 3,\n      \"name\": \"colorful\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 3 created successfully\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "",
+              "if (pm.response.code === 200 || pm.response.code === 201) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"pet3Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Create Pet 4",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 10004,\n  \"category\": {\n    \"id\": 4,\n    \"name\": \"Fish\"\n  },\n  \"name\": \"Nemo\",\n  \"photoUrls\": [\n    \"https://example.com/nemo.jpg\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 4,\n      \"name\": \"aquatic\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 4 created successfully\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "",
+              "if (pm.response.code === 200 || pm.response.code === 201) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"pet4Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Place Order for Pet 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 20001,\n  \"petId\": {{pet1Id}},\n  \"quantity\": 1,\n  \"shipDate\": \"2025-08-03T08:10:22.870Z\",\n  \"status\": \"placed\",\n  \"complete\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/store/order",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 1 placed successfully\", function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"order1Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Place Order for Pet 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 20002,\n  \"petId\": {{pet2Id}},\n  \"quantity\": 1,\n  \"shipDate\": \"2025-08-03T08:10:22.870Z\",\n  \"status\": \"placed\",\n  \"complete\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/store/order",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 2 placed successfully\", function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"order2Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Place Order for Pet 3",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 20003,\n  \"petId\": {{pet3Id}},\n  \"quantity\": 1,\n  \"shipDate\": \"2025-08-03T08:10:22.870Z\",\n  \"status\": \"placed\",\n  \"complete\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/store/order",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 3 placed successfully\", function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"order3Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Place Order for Pet 4",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 20004,\n  \"petId\": {{pet4Id}},\n  \"quantity\": 1,\n  \"shipDate\": \"2025-08-03T08:10:22.870Z\",\n  \"status\": \"placed\",\n  \"complete\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/store/order",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 4 placed successfully\", function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const responseJson = pm.response.json();",
+              "    pm.environment.set(\"order4Id\", responseJson.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Delete Order 1 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order1Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order1Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('order1DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Order 1 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order1DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('order1DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Order 1 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order1DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Delete Order 2 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order2Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order2Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('order2DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Order 2 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order2DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('order2DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Order 2 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order2DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Delete Order 3 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order3Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order3Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('order3DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Order 3 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order3DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('order3DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Order 3 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order3DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Delete Order 4 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order4Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order4Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('order4DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Order 4 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order4DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('order4DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Order 4 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('order4DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Delete Pet 1 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet1Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet1Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('pet1DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Pet 1 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet1DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('pet1DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Pet 1 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet1DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Delete Pet 2 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet2Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet2Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('pet2DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Pet 2 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet2DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('pet2DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Pet 2 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet2DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "15. Delete Pet 3 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet3Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet3Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('pet3DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Pet 3 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet3DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('pet3DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Pet 3 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet3DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "16. Delete Pet 4 (with Retry)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "api_key", "value": "{{apiKey}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet4Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet4Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let retryCount = pm.environment.get('pet4DeleteRetries') || 0;",
+              "",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Pet 4 deleted successfully\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet4DeleteRetries');",
+              "} else if (pm.response.code === 404 && retryCount < 3) {",
+              "    pm.environment.set('pet4DeleteRetries', retryCount + 1);",
+              "    setTimeout(() => {}, 1000);",
+              "    postman.setNextRequest(pm.info.requestName);",
+              "} else {",
+              "    pm.test(\"Pet 4 delete failed after retries\", function () {",
+              "        pm.expect(pm.response.code).to.eql(200);",
+              "    });",
+              "    pm.environment.unset('pet4DeleteRetries');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "17. Verify Pet 1 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet1Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet1Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 1 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "18. Verify Pet 2 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet2Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet2Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 2 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "19. Verify Pet 3 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet3Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet3Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 3 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "20. Verify Pet 4 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{pet4Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{pet4Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Pet 4 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "21. Verify Order 1 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order1Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order1Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 1 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "22. Verify Order 2 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order2Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order2Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 2 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "23. Verify Order 3 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order3Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order3Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 3 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "24. Verify Order 4 Deleted (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/store/order/{{order4Id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["store", "order", "{{order4Id}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Order 4 not found after deletion (404)\", function () {",
+              "    pm.expect(pm.response.code).to.eql(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
